@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html class="register-html">
+<head>
+    <meta http-equiv="content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title>注册</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/register.css">
+
+</head>
+<body>
+<script type="text/javascript" src="../static/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../static/js/rm.js"></script>
+<script type="text/javascript" src="../static/js/md5.js"></script>
+<script type="text/javascript" src="../static/js/account.js"></script>
+<script type="text/javascript" src="../static/js/post.js"></script>
+<script type="text/javascript" src="../static/js/projectManagement.js"></script>
+<script type="text/javascript" src="../static/js/code.js"></script>
+<div class="register-general">
+    <div class="register-title">系统注册</div>
+    <div id="darkbannerwrap"></div>
+
+    <form id="registerForm" method="post" onsubmit="return register()">
+        <ul class="reg_ul">
+            <li>
+                <span>用户名（必填）</span>
+                <input name="uid" class="reg_user" placeholder="4-8位用户名" id="inputUid" required="required" type="text">
+            </li>
+            <hr class="hr15">
+            <li>
+                <span>密码（必填）</span>
+                <input name="password" placeholder="6-16位密码" required="required" id="inputPassword" type="password">
+            </li>
+            <hr class="hr15">
+            <li>
+                <span>确认密码（必填）</span>
+                <input name="rePassword" id="inputRePassword" placeholder="确认密码" required="required" type="password">
+            </li>
+            <hr class="hr15">
+            <li>
+                <span>联系电话</span>
+                <input name="telephone" placeholder="联系电话" id="inputTelephone" type="text">
+            </li>
+            <hr class="hr15">
+            <li>
+                <span>电子邮箱</span>
+                <input name="email" placeholder="电子邮箱" id="inputEmail" type="email">
+            </li>
+            <hr class="hr15">
+            <input value="注册" style="width:100%;" type="submit">
+            <hr class="hr20">
+        </ul>
+    </form>
+</div>
+</body>
+</html>

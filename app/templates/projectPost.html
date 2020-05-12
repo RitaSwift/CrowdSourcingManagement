@@ -1,0 +1,277 @@
+{% extends 'basicLayout.html' %}
+{% set header = "项目详情" %}
+
+
+{% block nested %}
+    <div class="row">
+        <div class="col-sm-offset-1 col-sm-10 page-header">
+            <ul class="breadcrumb col">
+                <li>
+                    {% if session.uid and session.uid == project.ppublisher %}
+                        <a href="/post/myProjects?page=1">我的项目</a>
+                    {% else %}
+                        <a href="/post/projectList?page=1">项目列表</a>
+                    {% endif %}
+                </li>
+                <!--<li><a href="javascript: window.history.back()">项目列表</a></li>-->
+                <li class="active">{{ header }}</li>
+            </ul>
+            <h2>{{ header }}</h2>
+        </div>
+    </div>
+
+    <!--项目信息-->
+    <div class="row">
+        <div class="col-sm-offset-1 col-sm-10">
+            <div class="row post-container">
+                <div class="col-sm-2 post-left">
+                    <div>
+                        <label for="publisher">项目发布者</label>
+                        <div id="publisher">{{ project.ppublisher }}</div>
+                    </div>
+                    <br/>
+                    <div>
+                        <label for="language">项目语言</label>
+                        <div id="language">{{ project.planguage }}</div>
+                    </div>
+                    <br/>
+                    <div>
+                        <label for="field">项目领域</label>
+                        <div id="field">{{ project.pfield }}</div>
+                    </div>
+                </div>
+
+                <div class="col-sm-9 post-right">
+                    <div class="row">
+                        <div class="col-sm-12" id="name">（{% if project.pstate == '1' %}征集中{% else %}已结束{% endif %}）&nbsp;<b>{{ project.pname }}</b></div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-sm-12" id="description">{{ project.pdescription }}</div>
+                    </div>
+                </div>
+                <div class="col-xs-12 post-bottom">
+                    <label class="col-sm-1" for="createdTime"><b>创建时间</b></label>
+                    <div class="col-sm-2" id="createdTime">{{ project.pcreated_time }}</div>
+                    <label class="col-sm-1" for="closedTime"><b>截止日期</b></label>
+                    <div class="col-sm-2" id="closedTime">{{ project.pclosed_time }}</div>
+                    <label class="col-sm-2" for="number"><b>已征集到的需求数</b></label>
+                    <div class="col-sm-1" id="number">{{ numOfRequirement   }}</div>
+
+                    {% if session.uid %}
+                        {% if project.ppublisher == session.uid %}
+                        <!--若登陆人为发布者-->
+                            {% if project.pstate == '1' %}
+                            <!--项目未截止，则编辑项目-->
+                                <button class="btn btn-info col-sm-1 col-sm-offset-1" onclick="goToEditProject ({{project.pid}})">编辑项目</button>
+                                <button class="btn btn-danger col-sm-1" onclick="stopCollection({{ project.pid }})">截止征集</button>
+                            {% else %}
+                            <!--项目截止，则管理项目-->
+                                <a class="btn btn-info col-sm-2 col-sm-offset-1" href="/projectManagement?pid={{ project.pid }}">管理项目</a>
+                            {% endif %}
+                        {% else %}
+                        <!--若不是发布者-->
+                            {% if project.pstate == '1' %}
+                            <!--项目未截止，则可以提交-->
+                                <button class="btn btn-info col-sm-2 col-sm-offset-1" onclick="goToCreateRequirement({{project.pid}})">提交需求</button>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <a class="btn btn-warning col-md-2 col-md-offset-1" href="/login">请先登录</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--需求列表-->
+    {% if requirementList and requirementList|count > 0 %}
+        <div class="col-sm-offset-1 col-sm-10">
+            <h3>需求列表</h3>
+        </div>
+        {% for requirement in requirementList %}
+            <div class="row">
+                <div class="col-sm-offset-1 col-sm-10">
+                    <div class="row reply-container">
+                        <div class="col-sm-2 reply-left">
+                            <div>
+                                <label for="uid">需求提供者</label>
+                                <div id="uid">{{ requirement.uid }}</div>
+                            </div>
+                            <div>
+                                <label for="priority">优先级</label>
+                                <div id="priority">{{ requirement.priority }}</div>
+                            </div>
+                            <div>
+                                <label for="type">需求类型</label>
+                                <div id="type">{{ requirement.rtype }}</div>
+                            </div>
+                            <div>
+                                <label for="postTime">提供时间</label>
+                                <div id="postTime">{{ requirement.posttime }}</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-9 reply-right">
+                            <div class="row">
+                                <label class="col-sm-2" for="name">需求名称</label>
+                                <div class="col-sm-9" id="name"><b>{{ requirement.rname }}</b></div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-2" for="description">详细描述</label>
+                                <div class="col-sm-9" id="description">{{ requirement.description }}</div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-2" for="img_desc">图片资料</label>
+                                <div class="col-sm-9" id="img_desc">
+                                    {% if requirement.img %}
+                                        <img src="{{ url_for('static', filename='upload/' + requirement.img) }}" alt="项目图片" style="width: 200px; height: 200px" class="img-rounded img-responsive pic">
+                                        <div id="outerdiv" style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:2;width:100%;height:100%;display:none;">
+                                            <div id="innerdiv" style="position:absolute;">
+                                                <img id="bigimg" style="border:5px solid #fff;" src="" />
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        暂无图片
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--按钮-->
+                        {% if session.uid %}
+                            {% if requirement.uid == session.uid or project.ppublisher == session.uid %}
+                                {% if (project.pstate == '1' and requirement.uid == session.uid ) or  (project.ppublisher == session.uid and project.pstate == '0') %}
+                                <!--未截止才可以比编辑-->
+                                    <a class="btn btn-default col-sm-2 pull-right" onclick="goToEditRequirement({{ project.pid }}, {{ requirement.rid }})">编辑</a>
+                                {% endif %}
+                            {% else %}
+
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!--页码-->
+        {% set currentPage = request.args.get('page') | int %}
+        <div class="row">
+            <div class="col-sm-offset-1 col-sm-10" id="page-nav">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% set prefix = "/post/project?pid=" + request.args['pid'] %}
+                        {% if currentPage == 1 %}
+                            <li class="disabled"><span>&laquo;</span></li>
+                        {% else %}
+                            <li>
+                                <a href="{{ prefix }}&page={{ currentPage - 1 }}"><span>&laquo;</span></a>
+                            </li>
+                        {% endif %}
+                        {% for page in range(1, pageNumber + 1) %}
+                            {% if currentPage == page %}
+                                <li class="active">
+                                    <span>{{ page }}</span>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{{ prefix }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if currentPage == pageNumber %}
+                            <li class="disabled"><span>&raquo;</span></li>
+                        {% else %}
+                            <li>
+                                <a href="{{ prefix }}&page={{ currentPage + 1 }}"><span>&raquo;</span></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-sm-offset-1 col-sm-10">
+            <h4>暂无数据</h4>
+        </div>
+    {% endif %}
+
+
+    <!--模态框-->
+    <div class="modal fade" tabindex="-1" role="dialog" id="commentModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">添加评论</h4>
+                </div>
+                <form id="commentForm" onsubmit="return comment()">
+                    <!--记录js传来的rid-->
+                    <input type="hidden" id="rid" name="rid">
+
+                    <div class="modal-body" style="height: 200px">
+                        <div class="form-group">
+                            <label for="inputContent" class="col-sm-2 col-sm-offset-2 control-label">添加评论</label>
+                            <div class="col-sm-6">
+                                <textarea class="form-control" rows="5" id="inputContent" name="content" required="required"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success col-sm-2 pull-right">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+    <script>
+    $(function(){
+        $(".pic").click(function(){
+            var _this = $(this);//将当前的pimg元素作为_this传入函数
+            imgShow("#outerdiv", "#innerdiv", "#bigimg", _this);
+        });
+    });
+
+    function imgShow(outerdiv, innerdiv, bigimg, _this){
+        var src = _this.attr("src");//获取当前点击的pimg元素中的src属性
+        $(bigimg).attr("src", src);//设置#bigimg元素的src属性
+
+            /*获取当前点击图片的真实大小，并显示弹出层及大图*/
+        $("<img/>").attr("src", src).load(function(){
+            var windowW = $(window).width();//获取当前窗口宽度
+            var windowH = $(window).height();//获取当前窗口高度
+            var realWidth = this.width;//获取图片真实宽度
+            var realHeight = this.height;//获取图片真实高度
+            var imgWidth, imgHeight;
+            var scale = 0.8;//缩放尺寸，当图片真实宽度和高度大于窗口宽度和高度时进行缩放
+
+            if(realHeight>windowH*scale) {//判断图片高度
+                imgHeight = windowH*scale;//如大于窗口高度，图片高度进行缩放
+                imgWidth = imgHeight/realHeight*realWidth;//等比例缩放宽度
+                if(imgWidth>windowW*scale) {//如宽度扔大于窗口宽度
+                    imgWidth = windowW*scale;//再对宽度进行缩放
+                }
+            } else if(realWidth>windowW*scale) {//如图片高度合适，判断图片宽度
+                imgWidth = windowW*scale;//如大于窗口宽度，图片宽度进行缩放
+                            imgHeight = imgWidth/realWidth*realHeight;//等比例缩放高度
+            } else {//如果图片真实高度和宽度都符合要求，高宽不变
+                imgWidth = realWidth;
+                imgHeight = realHeight;
+            }
+                    $(bigimg).css("width",imgWidth);//以最终的宽度对图片缩放
+
+            var w = (windowW-imgWidth)/2;//计算图片与窗口左边距
+            var h = (windowH-imgHeight)/2;//计算图片与窗口上边距
+            $(innerdiv).css({"top":h, "left":w});//设置#innerdiv的top和left属性
+            $(outerdiv).fadeIn("fast");//淡入显示#outerdiv及.pimg
+        });
+
+        $(outerdiv).click(function(){//再次点击淡出消失弹出层
+            $(this).fadeOut("fast");
+        });
+    }
+    </script>
+{% endblock %}

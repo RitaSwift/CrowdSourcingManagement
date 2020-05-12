@@ -1,0 +1,32 @@
+<header id="cm-header">
+    <nav class="navbar nav-pills" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header" id="navbar-left">
+                <a class="navbar-brand" href="/post/projectList?page=1">众包需求管理系统</a>
+            </div>
+            <ul class="nav nav-pills navbar-left nav-font" id="nav-middle">
+                <li><a href="/post/projectList?page=1" class="nav-tab-margin">项目列表</a></li>
+                <li><a href="/post/myProjects?page=1" class="nav-tab-margin">我的项目</a></li>
+                <li><a href="/post/sendProject" class="nav-tab-margin">发布项目</a></li>
+               <!-- <li><a href="/post/searchProject" class="nav-tab-margin">查找项目</a></li>-->
+                <li>
+                    <form action="/post/searchResult" class="navbar-form nav-tab-margin" method="get">
+                        <div class="form-group has-feedback">
+                            <span class="form-control-feedback"></span>
+                            <input type="text" class="form-control" id="nav-search2" name="title" placeholder="搜索">
+                        </div>
+                    </form>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right nav-font" id="navbar-right">
+                  {% if session.uid %}
+                      <li><a href="/userInfo">{{ session.uid }}</a></li>
+                     <li><a href="javascript:void(0);" onclick="logout()"><span class="glyphicon glyphicon-log-out"></span> 注销</a></li>
+                  {% else %}
+                    <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+                    <li><a href="/register"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+                  {% endif %}
+            </ul>
+        </div>
+    </nav>
+</header>

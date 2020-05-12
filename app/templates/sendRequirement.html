@@ -1,0 +1,96 @@
+{% extends 'basicLayout.html' %}
+{% if requirement %}
+{% set header = "编辑需求" %}
+{% else %}
+{% set header = "添加需求" %}
+{% endif %}
+
+{% block nested %}
+<div class="row">
+    <div class="col-sm-offset-1 col-sm-10 page-header">
+        <ul class="breadcrumb col">
+            <li><a href="/post/projectList?page=1">项目列表</a></li>
+            <li><a href="/post/project?pid={{ request.args.get('pid') }}&page=1">项目详情</a></li>
+            <li class="active">{{header}}</li>
+        </ul>
+        <h1>{{ header }}</h1>
+    </div>
+</div>
+
+<div>
+    {% if session.uid %}
+    <form class="form-horizontal col-sm-offset-3" enctype="multipart/form-data" id="requirementInfoForm">
+        <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">需求名称</label>
+            <div class="col-sm-6">
+                <input class="form-control" id="inputName" name="name" required="required"
+                       value="{{ requirement.rname }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputType" class="col-sm-2 control-label">需求类型</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="inputType" name="type" required="required">
+                    <option value="Security">Security</option>
+                    <option value="Reliability">Reliability</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Lifecycle">Lifecycle</option>
+                    <option value="Usability">Usability</option>
+                    <option value="Capability">Capability</option>
+                    <option value="System Interface">System Interface</option>
+                    <option selected="selected" value="Others">others</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputPriority" class="col-sm-2 control-label">需求优先级（5为最高）</label>
+            <div class="col-sm-3">
+                <select class="form-control" id="inputPriority" name="priority" required="required"
+                        value="{{ requirement.priority }}">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputDescription" class="col-sm-2 control-label">详细描述</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" rows="10" id="inputDescription" name="description" required="required">{{ requirement.description }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="file" class="col-sm-2 control-label">图片说明</label>
+            <div class="col-sm-6">
+                <input type=file name="file" id="file" class="custom-file-input">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div>
+                <button class="btn btn-default col-sm-offset-2 col-xs-2" onClick="javascript: window.history.back()">
+                    取消
+                </button>
+                {% if requirement %}
+                    <button type="button" class="btn btn-success col-sm-offset-2 col-sm-2" onclick="editRequirement()">提交</button>
+                {% else %}
+                    <button type="button" class="btn btn-success col-sm-offset-2 col-sm-2" onclick="createRequirement()">提交</button>
+                {% endif %}
+
+            </div>
+        </div>
+    </form>
+
+    {% else %}
+    <div>请先登录</div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+
+
+{% extends 'basicLayout.html' %}
+{% if project %}
+{% set header = '编辑项目' %}
+{% else %}
+{% set header = '发布项目' %}
+{% endif %}
+{% block nested %}
+    {% if session.uid %}
+        <div class="row">
+            <div class="col-sm-offset-1 col-sm-10 page-header">
+                {% if project %}
+                    <ul class="breadcrumb col">
+                        <li><a href="/post/myProjects?page=1">我的项目</a></li>
+                        <li><a href="/post/project?pid={{ project.pid }}&page=1">项目详情</a></li>
+                        <li class="active">{{ header }}</li>
+                    </ul>
+                {% endif %}
+                    <!--<li class="active">${header}</li>-->
+            </div>
+        </div>
+
+        {% if project %}
+        <!--编辑-->
+            <form class="form-horizontal col-sm-offset-3" id="projectInfoForm" onsubmit="return editProject()">
+        {% else %}
+        <!--创建-->
+            <form class="form-horizontal col-sm-offset-3" id="projectInfoForm" onsubmit="return createProject()">
+        {% endif %}
+
+            <div class="form-group">
+                <label for="inputName" class="col-sm-2 control-label">项目名称</label>
+                <div class="col-sm-6">
+                    <input class="form-control" id="inputName" name="name" required="required" value="{{ project.pname }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputLanguage" class="col-sm-2 control-label">项目语言</label>
+                <div class="col-sm-4">
+                    <input class="form-control" id="inputLanguage" name="language" required="required" value="{{ project.planguage }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputField" class="col-sm-2 control-label">项目领域</label>
+                <div class="col-sm-4">
+                    <input class="form-control" id="inputField" name="field" required="required" value="{{ project.pfield }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputClosedTime" class="col-sm-2 control-label">截止日期</label>
+                <div class="col-sm-4">
+                    <input type="date" class="form-control" id="inputClosedTime" name="closedTime" required="required" value="{{ project.pclosed_time | string | truncate(10, True, '') }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputDescription" class="col-sm-2 control-label">项目描述</label>
+                <div class="col-sm-6">
+                    <textarea class="form-control" rows="10" id="inputDescription" name="description" required="required">{{ project.pdescription }}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <button class="btn btn-default col-xs-offset-2 col-xs-2" onClick="window.history.back()">取消</button>
+                    <button type="submit" class="btn btn-success col-xs-offset-2 col-xs-2">提交</button>
+                </div>
+            </div>
+        </form>
+
+    {% else %}
+        <div>请先<a href="/login">登录</a> </div>
+    {% endif %}
+{% endblock %}
